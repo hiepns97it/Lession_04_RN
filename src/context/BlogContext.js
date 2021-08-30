@@ -5,8 +5,11 @@ import createDataContext from './createDataContext';
 
 // sử dụng useReducer  khi quản lý nhiều userState
 const recuder = (state, action) => {
-    console.log(state);
     switch(action.type) {
+        case 'edit_blogPost':
+           return state.map(blogPost => {
+               return blogPost.id === action.playload.id ? action.playload : blogPost;
+           });
         case 'delete_blogPost': 
             return state.filter(blogPost => blogPost.id !== action.playload)
         case 'add_blogPost':
@@ -34,7 +37,9 @@ const addBlogPost = dispatch => {
     // sử dụng userReducer
     return (title, content, callback) => {
         dispatch({type: 'add_blogPost', playload: { title, content: content }});
-        callback();
+        if(callback){
+            callback();
+        }
     }
 }
 
@@ -43,6 +48,16 @@ const deleteBlogPost = dispatch => {
         dispatch({type: 'delete_blogPost', playload: id})
     }
 }
+
+const editBlogPost = dispatch => {
+    return (id, title, content, callback) => {
+        dispatch({type: 'edit_blogPost', playload: {id, title, content }});
+        if(callback){
+            callback();
+        }
+    }
+}
+
 
 // export const BlogProvider = ({ children }) => {
 //     //const [blogPosts, setBlogPosts] = useState([]);
@@ -63,4 +78,4 @@ const deleteBlogPost = dispatch => {
 
 
 //export default BlogContext;
-export const { Context, Provider } = createDataContext(recuder, { addBlogPost, deleteBlogPost }, []);
+export const { Context, Provider } = createDataContext(recuder, { addBlogPost, deleteBlogPost, editBlogPost }, []);
