@@ -1,4 +1,5 @@
 import React, { useReducer, useState } from 'react';
+import jsonServer from '../api/jsonServer';
 import createDataContext from './createDataContext';
 
 //const BlogContext = React.createContext();
@@ -6,6 +7,9 @@ import createDataContext from './createDataContext';
 // sử dụng useReducer  khi quản lý nhiều userState
 const recuder = (state, action) => {
     switch(action.type) {
+        case 'get_blogPosts':
+            console.log('success:' + action.playload);
+            return action.playload;
         case 'edit_blogPost':
            return state.map(blogPost => {
                return blogPost.id === action.playload.id ? action.playload : blogPost;
@@ -43,6 +47,21 @@ const addBlogPost = dispatch => {
     }
 }
 
+const getBlogPosts = dispatch => {
+    return async () => {
+        try {
+            const response = await jsonServer.get('/blogposts').then((res) => {
+                dispatch({type: 'get_blogPosts', playload: res.data});
+            }).catch((res) => {
+                console.log('error:' +res);
+            });
+        } catch(e) {
+            console.log('errorCatch:' + errorMessage);
+        }
+    };
+};
+
+
 const deleteBlogPost = dispatch => {
     return id => {
         dispatch({type: 'delete_blogPost', playload: id})
@@ -78,4 +97,8 @@ const editBlogPost = dispatch => {
 
 
 //export default BlogContext;
-export const { Context, Provider } = createDataContext(recuder, { addBlogPost, deleteBlogPost, editBlogPost }, []);
+export const { Context, Provider } = createDataContext(
+    recuder, 
+    { addBlogPost, deleteBlogPost, editBlogPost, getBlogPosts }, 
+    []
+);

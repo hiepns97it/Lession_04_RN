@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList,Button } from 'react-native';
 import { Context } from '../../context/BlogContext';
 import { Icon } from 'react-native-elements';
@@ -6,7 +6,13 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const IndexScreen = (props) =>  {
     const { navigation } = props;
-    const { state, addBlogPost, deleteBlogPost } = useContext(Context);
+    const { state, addBlogPost, deleteBlogPost, getBlogPosts } = useContext(Context);
+
+    useEffect(() => {
+        getBlogPosts();
+        console.log(state);
+    }, [])
+
     return(
         <View>
             <Button title="Add Blogs" onPress={addBlogPost}></Button>
